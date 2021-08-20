@@ -1,5 +1,4 @@
-const express = require("express");
-const { v4: uuidv4 } = require("uuid");
+const { nanoid } = require("nanoid");
 const validUrl = require("valid-url");
 const Url = require("../model/url");
 
@@ -10,11 +9,11 @@ exports.shortUrl = async (req, res) => {
   if (!validUrl.isUri(baseUrl)) {
     res.status(200).send("Internal error");
   }
-  const urlCode = uuidv4();
+  const urlCode = nanoid(3);
 
   if (validUrl.isUri(longUrl)) {
     try {
-      const findUrl = await Url.findOne({ longUrl: longUrl });
+      const findUrl = await Url.findOne({ longUrl });
       if (findUrl) {
         res.status(200).json(findUrl);
       } else {
@@ -64,7 +63,7 @@ exports.getShortenedUrl = async (req, res) => {
       }
 
       clickCount++;
-      await findUrl.update({ clickCount });
+      await findUrl.updateOne({ clickCount });
       return res.redirect(findUrl.longUrl);
     } else {
       return res

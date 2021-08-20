@@ -9,18 +9,13 @@ const databaseURI =
     ? process.env.PROD_DATABASE
     : process.env.DEV_DATABASE;
 
-const connectDB = async (
-  cb = () => {
-    console.log("hey");
-  }
-) => {
+const connectDB = async (cb = () => {}) => {
   try {
     await mongoose.connect(databaseURI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
     });
-    console.log(process.env.NODE_ENV == "production");
     console.log("DATABASE is working");
     cb();
   } catch (err) {
@@ -28,6 +23,7 @@ const connectDB = async (
   }
 };
 
+//error handling middleware functions
 app.use((req, res, next) => {
   const err = new Error();
   err.message = "Not found";
@@ -42,7 +38,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 const startServer = () =>
   app.listen(port, () => {
     console.log("app is running on port 3000");
